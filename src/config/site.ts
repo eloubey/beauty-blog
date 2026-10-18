@@ -2,9 +2,9 @@
 export type Cat = { slug: string; name: string; blurb?: string; image?: string; children?: Cat[] };
 
 export const site = {
-  name: 'Your Brand',
+  name: 'MKDIR',
   tagline: 'Fashion, beauty and lifestyle ideas that fit a real budget.',
-  heroTitle: 'Your Brand',
+  heroTitle: 'MKDIR',
   heroSub: 'Be the most polished version of you.',
   heroText: 'Outfit ideas, skincare, hair, nails and easy recipes, tested and explained simply.',
   author: { name: 'Your Name', bio: 'Write a short, friendly bio here. Explain who you are, what you test and why readers can trust your picks.', image: '' },
