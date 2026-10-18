@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import { allCats, getPosts, catSlugs } from '../../lib/posts';
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return allCats().map((cat) => ({ params: { slug: cat.slug }, props: { cat, posts: posts.filter((p) => catSlugs(cat.slug).includes(p.data.category)) } }));
+}
+const { cat, posts } = Astro.props;
+---
+<Base title={`Latest in ${cat.name}`} description={`Browse the latest ${cat.name.toLowerCase()} articles.`}>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / {cat.name}</nav>
+    <h1 class="page-title">Latest in {cat.name}</h1>
+    {posts.length ? <div class="grid g4">{posts.map((p) => <PostCard post={p} meta />)}</div> : <p>No posts here yet.</p>}
+  </div>
+  <Newsletter />
+</Base>

@@ -1,0 +1,13 @@
+---
+import { catName, fmt } from '../lib/posts';
+const { post, meta = false } = Astro.props;
+const d = post.data; const url = `/${post.id}/`;
+---
+<article class="card">
+  <a href={url} class="thumb" tabindex="-1" aria-hidden="true">
+    {d.image ? <img src={d.image} alt={d.imageAlt} loading="lazy" width="400" height="600" /> : <div class="ph"></div>}
+  </a>
+  <a class="tag" href={`/category/${d.category}/`}>{catName(d.category)}</a>
+  <h3><a href={url}>{d.title}</a></h3>
+  {meta && <p class="meta">By {d.author ?? 'Editor'} on {fmt(d.date)}</p>}
+</article>

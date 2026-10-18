@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import Section from '../components/Section.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { site, categories, homeSections } from '../config/site';
+import { getPosts, catSlugs } from '../lib/posts';
+const posts = await getPosts();
+const featured = (posts.filter((p) => p.data.featured).length ? posts.filter((p) => p.data.featured) : posts).slice(0, 4);
+---
+<Base title={site.name} description={site.tagline}>
+  <section class="hero">
+    <h1>{site.heroTitle}</h1><h2>{site.heroSub}</h2><p>{site.heroText}</p>
+    <a class="btn" href="#topics">Pick your topic</a>
+  </section>
+  <section id="topics" class="wrap section">
+    <div class="section-head"><h2>What's in store?</h2></div>
+    <div class="grid g6">{categories.slice(0, 6).map((c) => (
+      <a class="tile" href={`/category/${c.slug}/`}>
+        <div class="thumb">{c.image ? <img src={c.image} alt="" loading="lazy" /> : <div class="ph"></div>}</div>
+        <small>take me to</small><strong>{c.name}</strong>
+      </a>))}</div>
+  </section>
+  <section class="wrap section">
+    <div class="section-head"><h2>Posts you can't miss</h2></div>
+    <div class="grid g4">{featured.map((p) => <PostCard post={p} />)}</div>
+  </section>
+  {homeSections.map((s) => (
+    <Section title={s.title} slug={s.slug} posts={posts.filter((p) => catSlugs(s.slug).includes(p.data.category)).slice(0, 4)} />))}
+  <section class="wrap section"><div class="author">
+    <div class="thumb">{site.author.image ? <img src={site.author.image} alt={site.author.name} /> : <div class="ph"></div>}</div>
+    <div><h2><a href="/about/">Meet the author</a></h2><p>{site.author.bio}</p><a class="btn" href="/about/">About me</a></div>
+  </div></section>
+  <Newsletter />
+</Base>

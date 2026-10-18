@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import { render } from 'astro:content';
+import { site, categories } from '../config/site';
+import { getPosts, catName, fmt } from '../lib/posts';
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post, i) => ({ params: { slug: post.id }, props: { post, newer: posts[i - 1], older: posts[i + 1], posts } }));
+}
+const { post, newer, older, posts } = Astro.props;
+const d = post.data;
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2);
+const parent = categories.find((c) => c.children?.some((x) => x.slug === d.category));
+const picked = (d.related ?? []).map((s: string) => posts.find((p) => p.id === s)).filter(Boolean);
+const related = (picked.length ? picked : posts.filter((p) => p.id !== post.id && p.data.category === d.category)).slice(0, 4);
+const url = new URL(`/${post.id}/`, Astro.site).href;
+const q = encodeURIComponent(url), t = encodeURIComponent(d.title);
+const share = [['Pin', `https://pinterest.com/pin/create/button/?url=${q}&description=${t}`], ['Facebook', `https://www.facebook.com/sharer/sharer.php?u=${q}`], ['X', `https://x.com/intent/tweet?text=${t}&url=${q}`], ['WhatsApp', `https://wa.me/?text=${t}%20${q}`]];
+const jsonLd = { '@context': 'https://schema.org', '@type': 'Article', headline: d.title, description: d.description, datePublished: d.date, dateModified: d.updated ?? d.date, author: { '@type': 'Person', name: d.author ?? site.author.name }, ...(d.image && { image: new URL(d.image, Astro.site).href }) };
+---
+<Base title={d.title} description={d.description} image={d.image} type="article" jsonLd={jsonLd}>
+  <article class="wrap narrow article">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / {parent && <><a href={`/category/${parent.slug}/`}>{parent.name}</a> / </>}<a href={`/category/${d.category}/`}>{catName(d.category)}</a> /</nav>
+    <h1>{d.title}</h1>
+    {d.subtitle && <p class="sub-title">{d.subtitle}</p>}
+    <p class="byline">By <a href="/about/">{d.author ?? site.author.name}</a> · {d.updated ? `Updated ${fmt(d.updated)}` : fmt(d.date)}</p>
+    {d.image && <figure class="hero-img"><img src={d.image} alt={d.imageAlt} width="800" height="450" fetchpriority="high" /></figure>}
+    <p class="disclose">{site.affiliateNotice}</p>
+    <div class="share">{share.map(([n, h]) => <a href={h} target="_blank" rel="noopener">{n}</a>)}</div>
+    {toc.length > 2 && <nav class="toc" aria-label="Table of contents"><h2>In this article</h2><ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol></nav>}
+    <div class="prose"><Content /></div>
+    <div class="share">{share.map(([n, h]) => <a href={h} target="_blank" rel="noopener">{n}</a>)}</div>
+    <nav class="prevnext" aria-label="More articles">
+      {older ? <a href={`/${older.id}/`}><small>Previous</small>{older.data.title}</a> : <span></span>}
+      {newer ? <a class="next" href={`/${newer.id}/`}><small>Next</small>{newer.data.title}</a> : <span></span>}
+    </nav>
+  </article>
+  {related.length > 0 && <section class="wrap section"><div class="section-head"><h2>You might also like</h2></div><div class="grid g4">{related.map((p: any) => <PostCard post={p} />)}</div></section>}
+</Base>

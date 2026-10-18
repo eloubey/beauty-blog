@@ -1,0 +1,9 @@
+---
+import Page from '../layouts/Page.astro';
+import { site } from '../config/site';
+---
+<Page title="About" description={`About ${site.name} and ${site.author.name}.`}>
+  <p>{site.author.bio}</p>
+  <h2>What you'll find here</h2>
+  <p>Replace this with your story, your testing process and how you choose what to recommend.</p>
+</Page>

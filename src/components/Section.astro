@@ -1,0 +1,9 @@
+---
+import PostCard from './PostCard.astro';
+const { title, slug, posts } = Astro.props;
+---
+{posts.length > 0 && (
+<section class="wrap section">
+  <div class="section-head"><h2>{title}</h2><a href={`/category/${slug}/`}>See all</a></div>
+  <div class="grid g4">{posts.map((p: any) => <PostCard post={p} />)}</div>
+</section>)}

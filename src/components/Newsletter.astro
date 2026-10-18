@@ -1,0 +1,9 @@
+---
+import { site } from '../config/site';
+---
+{site.newsletter.enabled && (
+<section class="newsletter"><div class="wrap narrow">
+  <h2>Get new ideas in your inbox</h2><p>One email a week. No spam.</p>
+  <form action={site.newsletter.action} method="post"><label class="sr" for="nl">Email</label>
+  <input id="nl" type="email" name="email" placeholder="you@example.com" required /><button>Subscribe</button></form>
+</div></section>)}

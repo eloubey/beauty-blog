@@ -1,0 +1,55 @@
+---
+import '../styles/global.css';
+import { site, categories } from '../config/site';
+const { title, description = site.tagline, image, type = 'website', noindex = false, jsonLd } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const full = title === site.name ? title : `${title} | ${site.name}`;
+---
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>{full}</title><meta name="description" content={description} /><link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
+<meta property="og:title" content={full} /><meta property="og:description" content={description} />
+<meta property="og:type" content={type} /><meta property="og:url" content={canonical} /><meta property="og:site_name" content={site.name} />
+{image && <meta property="og:image" content={new URL(image, Astro.site)} />}
+<meta name="twitter:card" content="summary_large_image" />
+{jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="topbar"><div class="wrap row">
+    <nav class="social" aria-label="Social">{Object.entries(site.social).map(([k, v]) => <a href={v} target="_blank" rel="noopener">{k}</a>)}</nav>
+    <nav class="toplinks" aria-label="Secondary">{site.topLinks.map((l) => <a href={l.href}>{l.name}</a>)}<a href="/search/">Search</a></nav>
+  </div></div>
+  <div class="wrap brand-row">
+    <button class="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">Menu</button>
+    <a class="logo" href="/">{site.name}</a>
+    <a class="search-ico" href="/search/">Search</a>
+  </div>
+  <nav id="menu" class="menu" aria-label="Main"><ul class="wrap">
+    {categories.map((c) => (
+      <li class:list={{ 'has-sub': !!c.children }}>
+        <a href={`/category/${c.slug}/`}>{c.name}</a>
+        {c.children && <ul class="sub">{c.children.map((s) => <li><a href={`/category/${s.slug}/`}>{s.name}</a></li>)}</ul>}
+      </li>))}
+  </ul></nav>
+</header>
+<main id="main"><slot /></main>
+<footer class="site-footer"><div class="wrap">
+  <div class="fgrid">
+    <div><a class="logo" href="/">{site.name}</a><p>{site.tagline}</p></div>
+    <div><h3>Explore</h3><ul>{categories.slice(0, 5).map((c) => <li><a href={`/category/${c.slug}/`}>{c.name}</a></li>)}</ul></div>
+    <div><h3>More</h3><ul>{categories.slice(5).map((c) => <li><a href={`/category/${c.slug}/`}>{c.name}</a></li>)}{site.topLinks.slice(1).map((l) => <li><a href={l.href}>{l.name}</a></li>)}</ul></div>
+    <div><h3>Legal</h3><ul>{site.legalLinks.map((l) => <li><a href={l.href}>{l.name}</a></li>)}</ul>
+      <h3>Follow</h3><ul>{Object.entries(site.social).map(([k, v]) => <li><a href={v} target="_blank" rel="noopener">{k}</a></li>)}</ul></div>
+  </div>
+  <p class="fine">{site.affiliateNotice}</p>
+  <p class="fine">© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
+</div></footer>
+<script>
+  const b = document.querySelector('.burger'); const m = document.getElementById('menu');
+  b?.addEventListener('click', () => { const o = m!.classList.toggle('open'); b.setAttribute('aria-expanded', String(o)); });
+</script>
+</body></html>

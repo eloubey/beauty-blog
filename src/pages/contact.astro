@@ -1,0 +1,13 @@
+---
+import Page from '../layouts/Page.astro';
+---
+<Page title="Contact" description="Get in touch.">
+  <p>Questions, collaborations or corrections? Send a message.</p>
+  <!-- Replace the action with your Formspree / Basin / Cloudflare Worker endpoint -->
+  <form class="form" action="https://formspree.io/f/YOUR_FORM_ID" method="post">
+    <label for="n">Name</label><input id="n" name="name" required />
+    <label for="e">Email</label><input id="e" type="email" name="email" required />
+    <label for="m">Message</label><textarea id="m" name="message" rows="6" required></textarea>
+    <button class="btn">Send message</button>
+  </form>
+</Page>

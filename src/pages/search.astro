@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Search" description="Search all articles." noindex>
+  <div class="wrap narrow page search-box">
+    <h1>Search</h1>
+    <label class="sr" for="q">Search articles</label>
+    <input id="q" type="search" placeholder="Search nails, skincare, outfits…" autofocus />
+    <ul id="results" class="results"></ul>
+  </div>
+</Base>
+<script>
+  type Item = { title: string; description: string; category: string; url: string };
+  const q = document.getElementById('q') as HTMLInputElement, out = document.getElementById('results')!;
+  let idx: Item[] = [];
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
+  const run = (t: string) => {
+    const s = t.trim().toLowerCase();
+    const r = s ? idx.filter((p) => `${p.title} ${p.description} ${p.category}`.toLowerCase().includes(s)) : [];
+    out.innerHTML = !s ? '' : r.length ? r.map((p) => `<li><a href="${p.url}">${esc(p.title)}</a><span>${esc(p.category)}</span></li>`).join('') : '<li>No results. Try a different word.</li>';
+  };
+  fetch('/search.json').then((r) => r.json()).then((d) => { idx = d; q.value = new URLSearchParams(location.search).get('q') ?? ''; run(q.value); });
+  q.addEventListener('input', () => run(q.value));
+</script>
