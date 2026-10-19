@@ -12,12 +12,13 @@ const featured = (posts.filter((p) => p.data.featured).length ? posts.filter((p)
 ---
 <Base title={site.name} description={site.tagline}>
   <section class="hero">
-    <div class="hero-media" aria-hidden="true">
-      <Image src={heroBeauty} alt="" widths={[640, 960, 1280, 1800]} sizes="(max-width: 720px) 100vw, 58vw" quality={80} loading="eager" fetchpriority="high" />
-    </div>
     <div class="hero-copy">
-      <h1>{site.heroTitle}</h1><h2>{site.heroSub}</h2><p>{site.heroText}</p>
-      <a class="btn" href="#topics">Pick your topic</a>
+      <h1>{site.heroSub}</h1>
+      <p>{site.heroText}</p>
+      <a class="btn hero-cta" href="#topics">Pick Your Topic</a>
+    </div>
+    <div class="hero-media">
+      <Image src={heroBeauty} alt="Beauty editorial portrait" widths={[480, 720, 960, 1280]} sizes="(max-width: 720px) 58vw, 50vw" quality={82} loading="eager" fetchpriority="high" />
     </div>
   </section>
   <section id="topics" class="wrap section">

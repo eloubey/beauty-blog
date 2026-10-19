@@ -4,6 +4,10 @@ import { site, categories } from '../config/site';
 const { title, description = site.tagline, image, type = 'website', noindex = false, jsonLd } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const full = title === site.name ? title : `${title} | ${site.name}`;
+const topSocial = [
+  { name: 'pinterest', href: site.social.pinterest },
+  { name: 'instagram', href: site.social.instagram },
+];
 ---
 <!doctype html>
 <html lang="en"><head>
@@ -15,19 +19,38 @@ const full = title === site.name ? title : `${title} | ${site.name}`;
 <meta property="og:type" content={type} /><meta property="og:url" content={canonical} /><meta property="og:site_name" content={site.name} />
 {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
 <meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
 {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="topbar"><div class="wrap row">
-    <nav class="social" aria-label="Social">{Object.entries(site.social).map(([k, v]) => <a href={v} target="_blank" rel="noopener">{k}</a>)}</nav>
-    <nav class="toplinks" aria-label="Secondary">{site.topLinks.map((l) => <a href={l.href}>{l.name}</a>)}<a href="/search/">Search</a></nav>
+    <nav class="social" aria-label="Social">
+      {topSocial.map((s) => (
+        <a href={s.href} target="_blank" rel="noopener" aria-label={s.name}>
+          {s.name === 'pinterest' ? (
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 3 6.14 3 10.86c0 3.05 1.7 6 4.4 7.05.2.08.38 0 .44-.24.04-.16.14-.58.18-.76.06-.24.04-.32-.12-.54-.34-.4-.56-.92-.56-1.66 0-2.14 1.6-4.06 4.16-4.06 2.26 0 3.5 1.38 3.5 3.22 0 2.42-1.07 4.46-2.66 4.46-.88 0-1.54-.72-1.33-1.62.25-1.08.74-2.24.74-3.02 0-.7-.37-1.28-1.15-1.28-.91 0-1.64.94-1.64 2.2 0 .8.27 1.34.27 1.34s-.9 3.82-1.06 4.5c-.31 1.34-.05 3.5-.03 3.7 0 .12.16.16.22.06.1-.14 1.34-1.66 1.76-3.2.12-.42.68-2.66.68-2.66.34.64 1.32 1.2 2.36 1.2 3.1 0 5.2-2.84 5.2-6.64C20.5 5.7 16.86 2 12.04 2z"/></svg>
+          ) : (
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 3h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5zm8 1.8H8A3.2 3.2 0 0 0 4.8 8v8A3.2 3.2 0 0 0 8 19.2h8a3.2 3.2 0 0 0 3.2-3.2V8A3.2 3.2 0 0 0 16 4.8zM12 8.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 1.6A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8zm4.55-3.55a.95.95 0 1 1-.95.95.95.95 0 0 1 .95-.95z"/></svg>
+          )}
+        </a>
+      ))}
+    </nav>
+    <div class="topbar-right">
+      <nav class="toplinks" aria-label="Secondary">{site.topLinks.map((l) => <a href={l.href}>{l.name}</a>)}</nav>
+      <a class="search-ico" href="/search/" aria-label="Search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m16.6 16.6 4 4M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/></svg>
+      </a>
+    </div>
   </div></div>
   <div class="wrap brand-row">
-    <button class="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">Menu</button>
-    <a class="logo" href="/">{site.name}</a>
-    <a class="search-ico" href="/search/">Search</a>
+    <a class="logo" href="/">M<span>K</span>DIR</a>
+    <button class="burger" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
   <nav id="menu" class="menu" aria-label="Main"><ul class="wrap">
     {categories.map((c) => (
