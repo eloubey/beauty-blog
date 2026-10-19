@@ -1,17 +1,24 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
 import Section from '../components/Section.astro';
 import Newsletter from '../components/Newsletter.astro';
 import { site, categories, homeSections } from '../config/site';
 import { getPosts, catSlugs } from '../lib/posts';
+import heroBeauty from '../assets/hero-beauty.jpg';
 const posts = await getPosts();
 const featured = (posts.filter((p) => p.data.featured).length ? posts.filter((p) => p.data.featured) : posts).slice(0, 4);
 ---
 <Base title={site.name} description={site.tagline}>
   <section class="hero">
-    <h1>{site.heroTitle}</h1><h2>{site.heroSub}</h2><p>{site.heroText}</p>
-    <a class="btn" href="#topics">Pick your topic</a>
+    <div class="hero-media" aria-hidden="true">
+      <Image src={heroBeauty} alt="" widths={[640, 960, 1280, 1800]} sizes="(max-width: 720px) 100vw, 58vw" quality={80} loading="eager" fetchpriority="high" />
+    </div>
+    <div class="hero-copy">
+      <h1>{site.heroTitle}</h1><h2>{site.heroSub}</h2><p>{site.heroText}</p>
+      <a class="btn" href="#topics">Pick your topic</a>
+    </div>
   </section>
   <section id="topics" class="wrap section">
     <div class="section-head"><h2>What's in store?</h2></div>
